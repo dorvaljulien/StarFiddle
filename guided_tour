@@ -1,0 +1,175 @@
+#!/usr/bin/python
+from quick import *
+# ^ this is dirty but it actually makes life easier, and do not introduce any trouble.
+import sys
+
+
+
+def user_query(question):
+    sys.stdout.write('%s\n' % question)
+    return int(raw_input())
+
+
+def Demonstrations(N):
+
+    #----------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------
+
+    if N==1:
+        S = CM.King(N=10000)
+        S.Plot()
+
+    #----------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------
+
+    elif N==2:
+        # switch into interactive mode
+        plt.ion()
+        # Create the model
+        S = CM.Uniform(N=5000, mass_range = [0.1,30])
+        # The model is created in Nbody units (Mtot=1), rescaling the masses with original Mtot
+        S.scale_m(S.o_Mt)
+        # Plotting the model and getting the axis object
+        ax = S.Plot()
+        # Getting the indices of massive stars (nonzero turns boolean into int array)
+        ind_massives = np.nonzero(S.m > 10)[0]
+        # Build the kd tree
+        T = S.kdTree()
+        for ind in ind_massives:
+            # Getting the 6 neighbours of the massive star
+            ind_neighbours, dist_neighbours = T.nnearest(ind,6)
+            # Getting the x,y,z of these neighbours
+            xn,yn,zn = S.x[ind_neighbours], S.y[ind_neighbours], S.z[ind_neighbours]
+            # Plotting the massive star in red on the same axis object
+            ax.plot( [ S.x[ind],S.x[ind]], [ S.y[ind],S.y[ind] ], [ S.z[ind],S.z[ind]],
+                     "ro", markersize = 10)
+            # Plotting the neighbours in green
+            ax.plot( xn,yn,zn, "go", markersize = 5)
+        plt.show()
+
+    #----------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------
+
+    elif N==3:
+        print "Please wait a few seconds..."
+        # Create the King model
+        S = CM.King(N=20000)
+        # Computing local densities for each star with 10 neighbours
+        S.GetDensities(Nnb = 10)
+        # Plot the density scatter of kinetic energy vs density
+        DensityScatter(S.rho, S.Ek, logx=True, logy=True)
+        plt.xlabel( "Local density" )
+        plt.ylabel( "Kinetic energy" )
+        # Plotting King model with a bit of transparency so we see something
+        S.Plot(alpha=0.7)
+
+    #----------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------
+
+    elif N==4:
+        print "Please wait a few seconds..."
+        # Creating initial Plummer model
+        S = CM.Plummer(N=20000)
+        # Building the snap array
+        Sarr = [ deepcopy(S) for i in range(200) ]
+        # Getting what we need for the differential rotation
+        X, Y = S.x, S.y
+        theta0 = np.arctan(Y/X)
+        X,Y = X/np.cos(theta0), Y/np.sin(theta0)
+        R = abs(X)
+        # Going through the array, changing the snaps 
+        for i,s in enumerate(Sarr):
+            s.t = i # very important, for an animation, snaps should have successive .t !
+            s.x = X*np.cos(0.01*(1/R)*i + theta0 )
+            s.y = Y*np.sin(0.01*(1/R)*i +  theta0 )
+        # Building the run from the snap array
+        R = ReadRun.FromData(S=Sarr)
+        # Launching the animation with a 1ms frame (more than that in reality as matplotlib works)
+        R.Animation(delay=1)
+
+    #----------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------
+
+    elif N==5:
+        # Get into interactive mode
+        plt.ion()
+        # Creating initial Plummer model
+        S = CM.Plummer(N=2000)
+        # Building the snap array
+        Sarr = [ deepcopy(S) for i in range(200) ]
+        # Getting what we need for the differential rotation
+        X, Y = S.x, S.y
+        theta0 = np.arctan(Y/X)
+        X,Y = X/np.cos(theta0), Y/np.sin(theta0)
+        R = abs(X)
+        # Going through the array, changing the snaps 
+        for i,s in enumerate(Sarr):
+            s.t = i # very important, for an animation, snaps should have successive .t !
+            s.x = X*np.cos(0.01*(1/R)*i + theta0 )
+            s.y = Y*np.sin(0.01*(1/R)*i +  theta0 )
+        # Building the run from the snap array
+        R = ReadRun.FromData(S=Sarr)
+        # Using the PlotAnimation module:
+        # We need to define a Data instance containing the data of the synchronized
+        # plot, creating its first frame and updating it on demand from "n" the indice
+        # of the currently displayed snap, given by the slider of the main window.
+        from anim_plot import PlotAnimation
+        class Data():
+            def __init__(self,R):
+                self.X = [ s.x for s in R.S ]
+                self.Y = [ s.GetDensities() for s in R.S ]
+            def Initialize(self):
+                self.fig = plt.figure()
+                self.ax = self.fig.add_subplot(111)
+                X, Y = self.X[0], self.Y[0]
+                self.line, = plt.loglog(X, Y, "bo")
+                self.ax.set_xlabel("X")
+                self.ax.set_ylabel("Local Density")
+                self.canvas=self.ax.figure.canvas
+            def Update(self, n):
+                X, Y = self.X[n], self.Y[n]
+                self.line.set_data(X, Y)
+                self.canvas.draw()
+        # Launching the animation
+        R.Animation()
+        # Creating the data instance from the Run
+        D= Data(R)
+        # Creating the synchronized plot
+        P = PlotAnimation(R.Anim,D)
+        # Launching it
+        P.launch()
+        plt.show()
+
+    elif N==6:
+        plt.ion()
+        # I'm using the example provided in anim_sliders.py
+        from anim_sliders import SlidersAnimation, ExampleMultipleSlidersData
+        D = ExampleMultipleSlidersData()
+        A = SlidersAnimation(D)
+        A.launch()
+        plt.show()
+        
+    elif N==7:
+        S = FractalModel(nlevel=7,Velocities=False)
+        S.Plot()
+
+    else:
+        print "Please provide an integer between 1 and 7"
+    
+
+
+
+if __name__ == "__main__":
+    print "Welcome !\n\nMy name is Julien Dorval, I am a PhD student in astrophysics at the Observatoire Astronomique de Strasbourg, in France. This suite of code is what I developped to make my life easier while developping and analysing nbody simulations.\n\nhere is a list of things you can do with this API:\n- Create star cluster models (King, Uniform, Plummer, Hubble, Fractals)\n- Display them in a 3d interactive window\n- If you evolved your model through a Nbody integrator, you can visualize the evolution.\n- Add as much information as you want on these visualizations.\n- Manipulate the models: scale, select subsets, merge models, etc.\n- Get particles and global energies\n- Write and read your models and runs to HDF5\n- Perform efficient neighbour searches through a kdTree implementation\n\nThere are also useful modules such as:\n\ndensity_scatter_plot : \nCreate density-weighted color density to see what happens in the heart of your distribution, in 2d or 3d\n\nbinary_motion :\nFrom bound stars relative motion to binary star parameters (a, e), from binary star parameters to components motion, all you need to analyse or create binary stars.\n\n\nComputationnally expensive parts of analysis are made in C (see c_libraries directory) and interfaced in python. These c programs can be used as c modules as well as they are contained in shared libraries:\n- argsort functions (argsort.c)\n- energy functions (energy.c)\n- kD tree building (kdtree.c)\n- King model (king.c)\n\nThis is a light version, as some functionnalities have some complicated dependancies and were omitted:\n- Binary star detection\n- CUDA energy calculation\n- Minimum Spanning Tree and clump detection\n\nIf you have an interest in one of these, do not hesitate to send me an email at dorvaljulien@gmail.com. However I advise you learn to use the nbody API first, then add these if your really want to.\n\n\nNow, let's get into it.\n 1 - Create a King model and display it. ( try to rotate and zoom )\n 2 - Create an uniform model, with masses between 0.1 and 30, then show in red the stars\n    more massive than 10 solar masses, and their 6 closest neighbors in green.  \n 3 - Create a King model, compute local densities for each star and plot a density scatter plot\n    of kinetic energy versus local density\n 4 - Create a plummer model, build a sequence of snaps from it by introducing a differential\n    rotation. Display the animation.\n 5 - Same as 4, adding a synchronized plot of X vs local density.\n 6 - Display a sine wave, with sliders controlling its amplitude, shift and frequency.\n 7 - Build a fractal cluster and display it\n\n"
+
+    n = user_query("\nEnter the number of the demo you want to launch:")
+    Demonstrations(n)
+    Ongoing_Demo = True
+    while(Ongoing_Demo):
+        n = user_query("\nCode for these example can be found in guided_tour.py.\nEnter the number of the demo you want to launch (0 to quit):")
+        if n==0:
+            Ongoing_Demo = False
+        else:
+            Demonstrations(n)
+
+
