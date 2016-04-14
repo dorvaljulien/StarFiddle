@@ -33,6 +33,8 @@ S = Plummer( virial_ratio=0.01, truncature=3. )
 If you want to take a look at a cluster you created, just use:
   S.Plot()
 
+/!\ All created cluster are in Nbody units: total mass is 1.
+
 """
 
 import os
