@@ -1,9 +1,4 @@
-
-
-
-##################################################################################
-##########################     INTRODUCTION      #################################
-##################################################################################
+			INTRODUCTION     
 
 
 StarFiddle is a python and c API designed to analyse nbody simulations results. Here is a list of things you can do with it:
@@ -41,10 +36,9 @@ This is a light version, as some functionnalities have some complicated dependan
 If you have an interest in one of these, do not hesitate to send me an email at dorvaljulien@gmail.com. However I advise you learn to use the nbody API first, then add these if your really want to.
 
 
-
-##################################################################################
-##########################   INSTALL INSTRUCTIONS  ###############################
-##################################################################################
+----------------------------------------------------------------------------------
+			INSTALL INSTRUCTIONS  
+----------------------------------------------------------------------------------
 
 
 Add the StarFiddle directory to your PYTHONPATH:
@@ -86,9 +80,11 @@ If you don't have sudo permissions:
     - If everything worked, you're all set
 
 
-####################################################################################
-##########################           ADVICE          ###############################
-####################################################################################
+
+----------------------------------------------------------------------------------
+			ADVICE 
+----------------------------------------------------------------------------------
+
 
 - To get a nice working environnment, use "from quick import *". This works well to get everything you need.
 
