@@ -1,0 +1,110 @@
+
+
+
+##################################################################################
+##########################     INTRODUCTION      #################################
+##################################################################################
+
+
+StarFiddle is a python and c API designed to analyse nbody simulations results. Here is a list of things you can do with it:
+- Create star cluster models (King, Uniform, Plummer, Hubble, Fractals)
+- Display them in a 3d interactive window
+- If you evolved your model through a Nbody integrator, you can visualize the evolution.
+- Add as much information as you want on these visualizations.
+- Manipulate the models: scale, select subsets, merge models, etc.
+- Get particles and global energies
+- Write and read your models and runs to HDF5
+- Perform efficient neighbour searches through a kdTree implementation
+
+There are also useful modules such as:
+
+density_scatter_plot : 
+Create density-weighted color density to see what happens in the heart of your distribution, in 2d or 3d
+
+binary_motion :
+From bound stars relative motion to binary star parameters (a, e), from binary star parameters to components motion, all you need to analyse or create binary stars.
+
+anim_sliders:
+Display a plot with as many sliders as you want, each controlling a parameter of the plot (see example in anim_sliders.py)
+
+Computationnally expensive parts of analysis are made in C (see c_libraries directory) and interfaced in python. These c programs can be used as c modules as well as they are contained in shared libraries:
+- argsort functions (argsort.c)
+- energy functions (energy.c)
+- kD tree building (kdtree.c)
+- King model (king.c)
+
+This is a light version, as some functionnalities have some complicated dependancies and were omitted:
+- Binary star detection
+- CUDA energy calculation
+- Minimum Spanning Tree and clump detection
+
+If you have an interest in one of these, do not hesitate to send me an email at dorvaljulien@gmail.com. However I advise you learn to use the nbody API first, then add these if your really want to.
+
+
+
+##################################################################################
+##########################   INSTALL INSTRUCTIONS  ###############################
+##################################################################################
+
+
+Add the StarFiddle directory to your PYTHONPATH:
+
+In bash, add this to your .bashrc
+   export PYTHONPATH = path/to/StarFiddle/directory: $PYTHONPATH
+Then source your .bashrc
+
+If you have sudo permissions:
+    - "sudo make" in the StarFiddle/c_libraries directory
+    
+    - Test the package by running the guided tour
+      -> ./guided_tour
+    
+    - From your python interpreter, try "from StarFiddle import *"
+    
+    - If everything worked, you're all set
+
+/!\ If you encounter a "cannot open shared object" error, You might 
+want to run ldconfig to make sure the linker knows about the new 
+libraries. If that doesn't solve your problem, add /usr/local/lib to
+LD_LIBRARY_PATH in your .bashrc.
+
+
+If you don't have sudo permissions:
+
+    - Add to your .bashrc:
+      	  export LD_LIBRARY_PATH = /path/to/StarFiddle/c_libraries:$LD_LIBRARY_PATH
+      	  export STARFIDDLELIB = /path/to/StarFiddle/c_libraries
+      Then source it: "source ~/.bashrc"
+    
+    - "make local" in the StarFiddle/c_libraries directory.
+
+    - Test the package by running the guided tour
+      -> ./guided_tour
+    
+    - From your python interpreter, try "from StarFiddle import *"
+    
+    - If everything worked, you're all set
+
+
+####################################################################################
+##########################           ADVICE          ###############################
+####################################################################################
+
+- To get a nice working environnment, use "from quick import *". This works well to get everything you need.
+
+- Most of functions and classes are documented, explore nb6/pysnap.py to see all the things you can do with a PySnap object.
+
+- nb6/tools.py was made as an interface for NBODY6, a Nbody integrator. I tweaked NBODY6 so it spits out snap_xxxxxxx files organized as follow:
+
+N
+DIM
+t
+n1 m1 x1 y1 z1 vx1 vy1 vz1
+n2 m2 x2 y2 z2 vx2 vy2 vz2
+.
+.
+.
+nn mn xn yn zn vxn vyn vzn
+
+
+
