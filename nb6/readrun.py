@@ -13,12 +13,9 @@ import h5py
 from nb6.input_list import input_variables
 from nb6.pysnap import PySnap
 import animation3d as anim3d
-import anim_binary_histogram as animbin
-import anim_binary_parameters as animparam
 import cluster_models as CM
 from nb6.miscnb6 import read_run, snapname
 from binary_motion import RandomBinary
-import binaries
 
 AU_to_parsec=4.84e-6 
 

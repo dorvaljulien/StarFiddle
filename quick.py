@@ -7,7 +7,6 @@ from nb6.readrun import ReadRun,ReadHDF5
 from nb6.tools import LaunchNbody6
 from nb6.miscnb6 import read_snapshot, snapname
 import cluster_models as CM
-import binaries as B
 import numpy as np
 from copy import deepcopy
 import matplotlib.pyplot as plt

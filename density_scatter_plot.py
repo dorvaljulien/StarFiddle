@@ -4,7 +4,7 @@ corresponding to the local "point density".
 """
 
 import matplotlib.pyplot as plt, numpy as np, numpy.random, scipy
-import cubehelix
+#mport cubehelix
 from kdtree import Tree
 log=np.log10
 

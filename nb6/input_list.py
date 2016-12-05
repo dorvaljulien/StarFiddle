@@ -5,12 +5,15 @@ parameters for a Nbody6 run. These parameters can then be directly
 modified in I.
 """
 import numpy as np
+import os
 #       Definition of input parameters, options & counters.
 #       ---------------------------------------------------
 ## 
 #        Input parameters
 #        ****************
-# 
+#
+
+default_directory = os.path.join(os.environ["HOME"],"data/nbody6/test/")
 
 def make_dic(**kwargs):
     return kwargs
@@ -26,12 +29,12 @@ def input_variables():
     I.executable = "nbody6"
 
 #   Where the results will be placed
-    I.directory="/home/dorval/heavy_data/nbody6/test/"
+    I.directory = default_directory
     I.run_name="test"
     I.ForceErase=False
     I.path=I.directory+I.run_name
     I.Silent = False # print time steps while computing
-    I.GPU=False
+    I.GPU=False # If the gpu version of nbody6, nbody6.gpu is available
 
     I.N       =  1000    # Number of objects (N_singles + 2*NBin)
     I.DELTAT  =  0.1     # Output time interval (N-body units).
@@ -308,7 +311,7 @@ def input_variables():
             #     =5: density, rms velocity & mean mass on unit 26, 27 & 36;
             #     =6: pairwise values of mean mass and radii on unit 28.
 
-    I.KZ[8] = 3  #  Primordial binaries 
+    I.KZ[8] = 0  #  Primordial binaries 
             #     (=1 & >=3; >0: BINOUT; 
             #     >2: BINDAT; 
             #     >3: HIDAT;
@@ -351,7 +354,7 @@ def input_variables():
              #     =3: Eggleton, Tout & Hurley;
              #     >3: extra diagnostics).
 
-    I.KZ[20] = 3  #  Initial mass function (
+    I.KZ[20] = 0  #  Initial mass function (
              #     =0: Salpeter type using ALPHAS; 
              #     =1: Scalo;
              #     =2, 4, 6: Kroupa; 

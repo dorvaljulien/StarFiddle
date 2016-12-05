@@ -8,7 +8,7 @@ S = Uniform(mass_range=[0.01, 100] )
  | chosen from a Salpeter mass function between 0.01 and 100 solar 
  | masses.
 
-S = King(N=10000, virial_ratio = 0.4)
+S = King(N=10000, virial_ratio = 0.4, W0=4)
  | The King model is a widely used centrally concentrated model for 
  | star clusters. Here, its virial_ratio is set to 0.4, which is
  | slightly colder than equilibrium (0.5). The cluster, when left

@@ -1,7 +1,11 @@
-			INTRODUCTION     
+Author: Julien Dorval - dorvaljulien@gmail.com
 
 
-StarFiddle is a python and c API designed to analyse nbody simulations results. Here is a list of things you can do with it:
+INTRODUCTION     
+
+
+StarFiddle is a python and c API designed to analyse nbody simulations results. Here
+is a list of things you can do with it:
 - Create star cluster models (King, Uniform, Plummer, Hubble, Fractals)
 - Display them in a 3d interactive window
 - If you evolved your model through a Nbody integrator, you can visualize the evolution.
@@ -14,34 +18,48 @@ StarFiddle is a python and c API designed to analyse nbody simulations results. 
 There are also useful modules such as:
 
 density_scatter_plot : 
-Create density-weighted color density to see what happens in the heart of your distribution, in 2d or 3d
+Create density-weighted color density to see what happens in the heart of your
+distribution, in 2d or 3d
 
 binary_motion :
-From bound stars relative motion to binary star parameters (a, e), from binary star parameters to components motion, all you need to analyse or create binary stars.
+From bound stars relative motion to binary star parameters (a, e), from binary star
+parameters to components motion, all you need to analyse or create binary stars.
 
 anim_sliders:
-Display a plot with as many sliders as you want, each controlling a parameter of the plot (see example in anim_sliders.py)
+Display a plot with as many sliders as you want, each controlling a parameter of the
+plot (see example in anim_sliders.py)
 
-Computationnally expensive parts of analysis are made in C (see c_libraries directory) and interfaced in python. These c programs can be used as c modules as well as they are contained in shared libraries:
+Computationnally expensive parts of analysis are made in C (see c_libraries directory)
+and interfaced in python. These c programs can be used as c modules as well as they
+are contained in shared libraries:
 - argsort functions (argsort.c)
 - energy functions (energy.c)
 - kD tree building (kdtree.c)
 - King model (king.c)
 
-This is a light version, as some functionnalities have some complicated dependancies and were omitted:
+This is a light version, as some functionnalities have some complicated
+dependancies and were omitted:
 - Binary star detection
 - CUDA energy calculation
 - Minimum Spanning Tree and clump detection
 
-If you have an interest in one of these, do not hesitate to send me an email at dorvaljulien@gmail.com. However I advise you learn to use the nbody API first, then add these if your really want to.
+If you have an interest in one of these, do not hesitate to send me an email at
+dorvaljulien@gmail.com. However I advise you learn to use the nbody API first, then
+add these if your really want to.
 
 
 ----------------------------------------------------------------------------------
 			INSTALL INSTRUCTIONS  
 ----------------------------------------------------------------------------------
 
-You should first install matplotlib toolkits (for the 3d plots) and h5py. If there are other dependencies I didn't
-think of, please let me know. Add the StarFiddle directory to your PYTHONPATH:
+You should first install:
+- matplotlib
+- python-tk (for the visualization)
+- matplotlib toolkits (for the 3d plots, should be included in matplotlib, but might not be)
+- scipy
+- h5py
+If there are other dependencies I didn't think of, please let me
+know. Add the StarFiddle directory to your PYTHONPATH:
 
 In bash, add this to your .bashrc
    export PYTHONPATH = path/to/StarFiddle/directory: $PYTHONPATH
@@ -61,6 +79,8 @@ If you have sudo permissions:
 want to run ldconfig to make sure the linker knows about the new 
 libraries. If that doesn't solve your problem, add /usr/local/lib to
 LD_LIBRARY_PATH in your .bashrc.
+If that did not solve the problem, or you have another linking problem,
+God help us all. Send me an email, I'll do my best to solve the issue !
 
 
 If you don't have sudo permissions:
@@ -86,11 +106,21 @@ If you don't have sudo permissions:
 ----------------------------------------------------------------------------------
 
 
-- To get a nice working environnment, use "from quick import *". This works well to get everything you need.
+- To get a nice working environnment, use "from quick import *". This works well to
+get everything you need. (take a look at quick.py)
 
-- Most of functions and classes are documented, explore nb6/pysnap.py to see all the things you can do with a PySnap object.
+- Most of functions and classes are documented, explore nb6/pysnap.py to see all the
+things you can do with a PySnap object.
 
-- nb6/tools.py was made as an interface for NBODY6, a Nbody integrator. I tweaked NBODY6 so it spits out snap_xxxxxxx files organized as follow:
+
+
+
+----------------------------------------------------------------------------------
+			NBODY6 wrapper
+----------------------------------------------------------------------------------
+
+StarFiddle contains a python wrapper for NBODY6, the nbody integrator. I tweaked
+NBODY6 so it spits out snap_xxxxxxx files organized as follow:
 
 N
 DIM
@@ -102,5 +132,68 @@ n2 m2 x2 y2 z2 vx2 vy2 vz2
 .
 nn mn xn yn zn vxn vyn vzn
 
+To modify NBODY6 so it works with StarFiddle, head to StarFiddle/modified_nb6_files.
+It contains a few fortran files and headers. These should replace the files with the
+same names in the subdirectories within the directory where you installed nbody6.
+For example,  StarFiddle/modified_nb6_files/Ncode/start.f should replace nbody6/Ncode/start.f
+You can then build nbody6.
 
+the nbody6 executable "nbody6"  and the "clean_output.sh" script in StarFiddle should
+both be placed in a directory in your PATH so they can be called from anywhere. If
+you have the GPU version of NBODY6, "nbody6.gpu", it too should be callable.
+
+When this is done and StarFiddle c libraries have been correctly built and the guided
+tour went well, you can start using the nbody6 wrapper.
+
+Example:
+
+We want to launch a run lasting 3 Nbody time, with a time step of 0.2 nbody time,
+starting from a Plummer model and with 3500 particles. We also want the snapshots to be
+stored in the general directory
+"/myhome/data/plummers/test_plummer_00"
+
+R = NBODY6( N=3500, model="Plummer", tend=3, dt=0.2, 
+    	    	     directory = "/myhome/data/plummers",
+  	    	     run_name="test_plummer_00" )
+
+The above function is defined in quick.py and is a shortened version of:
+
+LaunchNbody6( N=3500, model="Plummer", tend=3, dt=0.2,
+	      directory = "/myhome/data/plummers",
+	      		    run_name="test_plummer_00" )
+R = ReadRun( "/myhome/data/plummers/test_plummer_00" )			    			       
+
+NBODY6 directly returns a ReadRun instance while LaunchNbody6 returns an input list
+object I, which contains all the parameters used for the run, among which the
+full path I.path = "/myhome/data/plummers/test_plummer_00"
+
+You should modify the default directory in nb6/input_list.py so you only have to
+specify the run_name. If run_name is not specified, the run is launched in the
+default or specified directory with the name "test".
+
+You can launch NBODY6 from custom initial conditions. For example, let's create a King
+model with 5000 stars and remove all stars too close to the center (this also shows a
+bit of PySnap handling)
+
+
+# Creating a PySnap
+S = CM.King( N=5000 ) 
+# Creating a new PySnap removing stars with a distance to origin smaller than 0.4
+newS = S.SelectParticles( S.R() < 0.4 )
+# Launching NBODY6 on it
+R = NBODY6( model="Custom", initial_state=newS, dt=0.5, tend=14, run_name="half_King")
+# Launching the animation to visualise the evolution once calculations are over
+R.Animation()
+
+
+Several initial models are available in cluster_models.py, all the specific parameters
+for each models can be directly passed onto the Nbody6 functions. For example, the w0
+parameter for King models can be passed directly:
+Rk = NBODY6( model="King", N=1500, W0=10, tend=10)
+
+Idem for the Hub parameter of Hubble models or the A0 or truncature for Plummer models,
+or the virial ratio for any models (except Hubble).
+
+This README is probably too short, I hope StarFiddle is usable as is, don't hesitate to ask
+me for help by email !
 

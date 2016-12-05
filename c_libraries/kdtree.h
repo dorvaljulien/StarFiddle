@@ -1,5 +1,7 @@
 #define FLOAT double
 
+FLOAT inline square(FLOAT a) {return a*a;}
+
 //--------------------------------------------------------------------
 //------------------        STRUCTURES             -------------------
 //--------------------------------------------------------------------
@@ -26,6 +28,7 @@ typedef struct Tree
     int *rptindx;  // reverse index: rptindx[ptindx[i]]=i
     int nboxes;    // Total number of boxes in the tree
     Box *boxes;    // Array of boxes
+    FLOAT *global_coords; // Array containing all coordinates for all points
 }Tree;
 
 
@@ -82,3 +85,10 @@ int locatenear(Tree tree, Point pt, FLOAT r,
 //--------------------------------------------------------------------
 void free_tree(Tree *tree);
 
+
+//--------------------------------------------------------------------
+//------------------        Misc                    ------------------
+//--------------------------------------------------------------------
+void companion_surface_density(int NNb, FLOAT *x, int N,
+			       int DIM, FLOAT *density);
+FLOAT volume(FLOAT r, int DIM);

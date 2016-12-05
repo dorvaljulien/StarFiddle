@@ -2,12 +2,7 @@
 #include<stdio.h>
 #include<math.h>
 
-double inline square(double a) {return a*a;}
-double inline cube(double a) {return a*a*a;}
-inline double SIGN(double a, double b)
-    {return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a);}
-inline  double MAX(double a, double b) { return b>a ? b : a;}
-inline  double MIN(double a, double b) { return b>a ? a : b;}
+
 
 #define PrI(_i) {printf("%d\n",_i);}
 

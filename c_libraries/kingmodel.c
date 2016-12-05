@@ -10,6 +10,13 @@ converted to C by Julien Dorval.
 #include<math.h>
 #include"kingmodel.h"
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+double sqre(double a) {return a*a;}
+double cub(double a) {return a*a*a;}
+double SIGN(double a, double b)
+    {return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a);}
+
 
 int main(){
     int i;
@@ -155,18 +162,18 @@ Returns:
     for( nr=0; nr<nrg-1; nr++ ){
 	h = radius[nr+1]-radius[nr];
 	tote = tote + 0.5*h*( dene[nr+1] + dene[nr] ) -
-	    cube(h)/24.*( dene2[nr+1] + dene2[nr] );
+	    cub(h)/24.*( dene2[nr+1] + dene2[nr] );
 	totm = totm + 0.5*h*( denm[nr+1] + denm[nr] ) -
-	    cube(h)/24.*( denm2[nr+1] + denm2[nr] );
+	    cub(h)/24.*( denm2[nr+1] + denm2[nr] );
     }
 
     totm = 4.*M_PI*totm;
     tote = 2.*M_PI*tote + 0.5*totm*totm/radius[nrg-1];
     tote = 0.5*tote;
 
-    r0 = 4.*tote/square(totm);
+    r0 = 4.*tote/sqre(totm);
     p0 = totm/(4.*tote);
-    d0 = pow(totm,5)/cube(4.*tote);
+    d0 = pow(totm,5)/cub(4.*tote);
 
     for( nr=0; nr<nrg; nr++ ){
         radius[nr] = r0*radius[nr];

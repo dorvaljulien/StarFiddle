@@ -11,6 +11,7 @@ An example of usage can be found in the main at the end.
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>  
+#include <time.h>  
 #include "argsort.h" 
 #define BIG 1e38
 #define FLOAT double
@@ -27,8 +28,8 @@ An example of usage can be found in the main at the end.
 	x;})
 
 
-FLOAT inline square(FLOAT a) {return a*a;}
-
+//FLOAT inline square(FLOAT a) {return a*a;}
+FLOAT square(FLOAT a) {return a*a;}
 
 /* Define the Point, Box and Tree structures */
 
@@ -703,7 +704,6 @@ void companion_surface_density(int NNb, FLOAT *x, int N, int DIM, FLOAT *density
     free(nb_list);
     return;
 }
-
 
 
 

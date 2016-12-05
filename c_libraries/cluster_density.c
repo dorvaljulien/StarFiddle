@@ -4,8 +4,8 @@
 #include <stdarg.h>
 #include <math.h>
 #include <time.h>
-#include <kdtree.h>
-#include <argsort.h>
+#include "kdtree.h"
+#include "argsort.h"
  
 void salpeter(int N, double *m, double alpha, double m1, double m2){
     /*
