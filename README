@@ -178,7 +178,7 @@ bit of PySnap handling)
 
 # Creating a PySnap
 S = CM.King( N=5000 ) 
-# Creating a new PySnap removing stars with a distance to origin smaller than 0.4
+# Creating a new PySnap removing stars with a distance to origin larger than 0.4
 newS = S.SelectParticles( S.R() < 0.4 )
 # Launching NBODY6 on it
 R = NBODY6( model="Custom", initial_state=newS, dt=0.5, tend=14, run_name="half_King")
